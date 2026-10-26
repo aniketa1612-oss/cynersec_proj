@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Outdated web server with known vulnerability",
+    "asset": "training-web-01",
+    "score": 9.31,
+    "priority": "Critical",
+    "explanation": "Priority is based on CVSS 9.1/10, asset value 8/10, confidence 9/10, known-exploit evidence, internet exposure.",
+    "recommendation": "Validate non-destructively, restrict exposure, and begin urgent remediation after analyst approval.",
+    "source": "normalized-json",
+    "observed_at": "not supplied"
+  },
+  {
+    "name": "Weak TLS cipher configuration",
+    "asset": "training-api-01",
+    "score": 6.58,
+    "priority": "High",
+    "explanation": "Priority is based on CVSS 6.5/10, asset value 7/10, confidence 8/10, internet exposure.",
+    "recommendation": "Confirm the affected version or configuration and schedule prompt remediation.",
+    "source": "normalized-json",
+    "observed_at": "not supplied"
+  },
+  {
+    "name": "Missing security headers",
+    "asset": "training-portal-01",
+    "score": 5.17,
+    "priority": "Medium",
+    "explanation": "Priority is based on CVSS 4.3/10, asset value 6/10, confidence 8/10, internet exposure.",
+    "recommendation": "Confirm with a safe version or configuration check and plan remediation.",
+    "source": "normalized-json",
+    "observed_at": "not supplied"
+  },
+  {
+    "name": "Verbose server banner",
+    "asset": "training-web-02",
+    "score": 2.73,
+    "priority": "Low",
+    "explanation": "Priority is based on CVSS 2.6/10, asset value 3/10, confidence 7/10.",
+    "recommendation": "Retain the evidence, check for false positives, and monitor.",
+    "source": "normalized-json",
+    "observed_at": "not supplied"
+  }
+]

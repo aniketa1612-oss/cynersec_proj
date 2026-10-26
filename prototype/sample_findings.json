@@ -1,0 +1,42 @@
+{
+  "authorized_assessment": true,
+  "assessment_name": "Local Training Lab",
+  "findings": [
+    {
+      "name": "Outdated web server with known vulnerability",
+      "asset": "training-web-01",
+      "cvss": 9.1,
+      "asset_value": 8,
+      "confidence": 9,
+      "known_exploit": true,
+      "internet_exposed": true
+    },
+    {
+      "name": "Missing security headers",
+      "asset": "training-portal-01",
+      "cvss": 4.3,
+      "asset_value": 6,
+      "confidence": 8,
+      "known_exploit": false,
+      "internet_exposed": true
+    },
+    {
+      "name": "Weak TLS cipher configuration",
+      "asset": "training-api-01",
+      "cvss": 6.5,
+      "asset_value": 7,
+      "confidence": 8,
+      "known_exploit": false,
+      "internet_exposed": true
+    },
+    {
+      "name": "Verbose server banner",
+      "asset": "training-web-02",
+      "cvss": 2.6,
+      "asset_value": 3,
+      "confidence": 7,
+      "known_exploit": false,
+      "internet_exposed": false
+    }
+  ]
+}

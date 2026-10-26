@@ -1,0 +1,15 @@
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.db
+node_modules/
+frontend/dist/
+data/nvd/*
+data/kev/*
+data/processed/*
+!data/**/.gitkeep
+models/*.joblib
+reports/*.png
+logs/*.log

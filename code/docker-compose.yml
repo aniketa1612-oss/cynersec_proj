@@ -1,0 +1,124 @@
+services:
+  backend:
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg://adaptive:adaptive@postgres/adaptive
+      SECRET_KEY: ${SECRET_KEY:-replace-this-development-key}
+      ENABLE_LIVE_SCANNING: "false"
+      CELERY_ENABLED: "true"
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      DEFECTDOJO_URL: ${DEFECTDOJO_URL:-}
+      DEFECTDOJO_API_KEY: ${DEFECTDOJO_API_KEY:-}
+    ports: ["8000:8000"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+  worker:
+    build: .
+    command: celery -A app.tasks.celery_app worker --loglevel=INFO --concurrency=2
+    environment:
+      DATABASE_URL: postgresql+psycopg://adaptive:adaptive@postgres/adaptive
+      SECRET_KEY: ${SECRET_KEY:-replace-this-development-key}
+      ENABLE_LIVE_SCANNING: "false"
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+  frontend:
+    build: ./frontend
+    ports: ["5173:80"]
+    depends_on:
+      backend:
+        condition: service_started
+    restart: unless-stopped
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: adaptive
+      POSTGRES_PASSWORD: adaptive
+      POSTGRES_DB: adaptive
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U adaptive -d adaptive"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+  redis:
+    image: redis:8-alpine
+    command: redis-server --appendonly yes
+    volumes: ["redis_data:/data"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+  mlflow:
+    build: .
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:////mlflow/mlflow.db --default-artifact-root /mlflow/artifacts
+    ports: ["5000:5000"]
+    volumes: ["mlflow_data:/mlflow"]
+    restart: unless-stopped
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    command: ["--config.file=/etc/prometheus/prometheus.yml"]
+    ports: ["9090:9090"]
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on: [backend]
+    restart: unless-stopped
+  grafana:
+    image: grafana/grafana:12.1.1
+    ports: ["3000:3000"]
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on: [prometheus]
+    restart: unless-stopped
+  trivy:
+    image: aquasec/trivy:0.66.0
+    profiles: ["tools"]
+    command:
+      - fs
+      - --scanners
+      - vuln,secret,misconfig
+      - --timeout
+      - 15m
+      - --skip-dirs
+      - /workspace/.uv-cache
+      - --skip-dirs
+      - /workspace/.venv
+      - --skip-dirs
+      - /workspace/frontend/node_modules
+      - --skip-dirs
+      - /workspace/frontend/dist
+      - --format
+      - json
+      - --output
+      - /reports/trivy-report.json
+      - /workspace
+    volumes:
+      - ./:/workspace:ro
+      - ./reports:/reports
+      - trivy_cache:/root/.cache/trivy
+volumes:
+  postgres_data:
+  redis_data:
+  mlflow_data:
+  grafana_data:
+  trivy_cache:

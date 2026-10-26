@@ -1,0 +1,7 @@
+apiVersion: 1
+providers:
+  - name: Adaptive Pentest
+    folder: Adaptive Pentest
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards

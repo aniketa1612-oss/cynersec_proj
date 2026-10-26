@@ -1,0 +1,40 @@
+{
+  "weights": {
+    "cvss": 0.55,
+    "asset_value": 0.20,
+    "confidence": 0.10,
+    "known_exploit": 1.0,
+    "internet_exposed": 0.8
+  },
+  "priority_thresholds": {
+    "critical": 8.0,
+    "high": 6.0,
+    "medium": 4.0
+  },
+  "severity_to_cvss": {
+    "info": 0.0,
+    "informational": 0.0,
+    "low": 3.1,
+    "medium": 5.5,
+    "high": 8.0,
+    "critical": 9.5
+  },
+  "confidence_scores": {
+    "low": 4.0,
+    "medium": 7.0,
+    "high": 9.0,
+    "confirmed": 10.0
+  },
+  "import_defaults": {
+    "asset_value": 5.0,
+    "nuclei_confidence": 8.0,
+    "nmap_confidence": 8.0,
+    "internet_exposed": false
+  },
+  "recommendations": {
+    "critical": "Validate non-destructively, restrict exposure, and begin urgent remediation after analyst approval.",
+    "high": "Confirm the affected version or configuration and schedule prompt remediation.",
+    "medium": "Confirm with a safe version or configuration check and plan remediation.",
+    "low": "Retain the evidence, check for false positives, and monitor."
+  }
+}
